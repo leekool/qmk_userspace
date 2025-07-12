@@ -2,8 +2,9 @@
 
 enum charybdis_keymap_layers {
     LAYER_BASE = 0,
-    LAYER_LOWER,
-    LAYER_RAISE,
+    LAYER_MOVE,
+    LAYER_NUM,
+    LAYER_FUNC,
     LAYER_POINTER,
 };
 
@@ -49,8 +50,9 @@ static uint16_t auto_pointer_layer_timer = 0;
 /* layer taps */
 #define L1_BSPC LT(1, KC_BSPC)
 #define L2_TAB LT(2, KC_TAB)
-#define L3_DEL LT(3, KC_DEL)
-// #define L4_ESC LT(4, KC_ESC)
+// L3 handled by esc_func_combo
+#define D_CUR LT(4, KC_D)
+// #define L4_DEL LT(4, KC_DEL)
 
 // enum custom_keycodes { DRG_SCR = SAFE_RANGE, LR_PRN, LR_CBR, LR_BRC };
 
@@ -60,15 +62,15 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
        XXXXXXX,    KC_Q,    KC_W,    KC_F,    KC_P,    KC_G,       KC_J,    KC_L,    KC_U,    KC_Y, KC_QUOT, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       XXXXXXX,   A_GUI,   R_ALT,   S_CTL,    KC_T,    KC_D,       KC_H,    KC_N,   E_CTL,   I_ALT,   O_GUI, XXXXXXX,
+       XXXXXXX,   A_GUI,   R_ALT,   S_CTL,    KC_T,   D_CUR,       KC_H,    KC_N,   E_CTL,   I_ALT,   O_GUI, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX,   Z_SFT,    KC_X,    KC_C,    KC_V,    KC_B,       KC_K,    KC_M, KC_COMM,  KC_DOT,  SL_SFT, XXXXXXX,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                   L3_DEL, L1_BSPC, ENT_CTL,    SPC_CTL,  L2_TAB
+                                   KC_DEL, L1_BSPC, ENT_CTL,    SPC_CTL,  L2_TAB
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
-  [LAYER_LOWER] = LAYOUT( // L1_BSPC
+  [LAYER_MOVE] = LAYOUT( // L1_BSPC
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
        XXXXXXX,  KC_ESC, _______, _______, _______, _______,     KC_DLR, KC_HOME, KC_PGUP, KC_PGDN,  KC_END, QK_BOOT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
@@ -80,7 +82,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
-  [LAYER_RAISE] = LAYOUT( // L2_TAB
+  [LAYER_NUM] = LAYOUT(
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
        XXXXXXX,  KC_DLR,    KC_7,    KC_8,    KC_9, KC_LBRC,     KC_DLR,  KC_EQL, KC_MINS, KC_SCLN,  KC_GRV, _______,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
@@ -92,7 +94,19 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
-  [LAYER_POINTER] = LAYOUT( // unused
+  [LAYER_FUNC] = LAYOUT( // L2_TAB
+  // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
+       XXXXXXX, _______,   KC_F7,   KC_F8,   KC_F9, _______,    _______, _______, _______, _______, _______, _______,
+  // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
+       XXXXXXX, _______,   KC_F4,   KC_F5,   KC_F6, _______,    _______, _______, KC_LCTL, KC_LALT, KC_LGUI, _______,
+  // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
+       XXXXXXX, _______,   KC_F1,   KC_F2,   KC_F3, _______,    _______, _______, _______, _______, _______, _______,
+  // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
+                                  _______,  KC_F10, _______,    _______, _______
+  //                            ╰───────────────────────────╯ ╰──────────────────╯
+  ),
+
+  [LAYER_POINTER] = LAYOUT(
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
        QK_BOOT,  EE_CLR, XXXXXXX, XXXXXXX, DPI_MOD, S_D_MOD,    S_D_MOD, DPI_MOD, XXXXXXX, XXXXXXX,  EE_CLR, QK_BOOT,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
@@ -100,7 +114,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX, _______, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, SNIPING, DRGSCRL, _______, XXXXXXX,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                  KC_BTN2, KC_BTN1, KC_BTN3,    KC_BTN3, KC_BTN1
+                                  KC_BTN3, KC_BTN1, KC_BTN2,    KC_BTN2, KC_BTN1
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 };
@@ -153,6 +167,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case A_GUI:
             return TAPPING_TERM + 30;
         case O_GUI:
+        case D_CUR:
             return TAPPING_TERM + 20;
         case EQL_SFT:
         case SL_SFT:
@@ -160,9 +175,9 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case L1_BSPC:
             return TAPPING_TERM - 30;
         case L2_TAB:
-            return TAPPING_TERM - 68;
-        case Z_SFT:
             return TAPPING_TERM - 75;
+        case Z_SFT:
+            return TAPPING_TERM - 80;
         default:
             return TAPPING_TERM;
     }
@@ -175,11 +190,10 @@ const key_override_t lcbr_key_override   = ko_make_basic(MOD_MASK_SHIFT, KC_LCBR
 
 const key_override_t *key_overrides[] = {&delete_key_override, &lbrc_key_override, &lprn_key_override, &lcbr_key_override};
 
-// const uint16_t PROGMEM esc_combo[] = {SPC_CTL, L2_TAB, COMBO_END};
-const uint16_t PROGMEM esc_combo[] = {RCTL_T(KC_SPC), LT(2, KC_TAB), COMBO_END};
+const uint16_t PROGMEM esc_func_combo[] = {RCTL_T(KC_SPC), LT(2, KC_TAB), COMBO_END};
 
 combo_t key_combos[] = {
-    COMBO(esc_combo, KC_ESC)
+    COMBO(esc_func_combo, LT(3, KC_ESC))
 };
 
 // bool process_record_user(uint16_t keycode, keyrecord_t *record) {
