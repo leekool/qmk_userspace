@@ -41,6 +41,8 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define I_ALT LALT_T(KC_I)
 #define E_CTL LCTL_T(KC_E)
 
+#define B_SCRL LT(0, KC_B)
+
 /* corner shifts */
 #define Z_SFT LSFT_T(KC_Z)
 #define EQL_SFT LSFT_T(KC_EQL)
@@ -53,8 +55,6 @@ static uint16_t auto_pointer_layer_timer = 0;
 // L3 handled by esc_func_combo
 #define D_CUR LT(4, KC_D)
 // #define L4_DEL LT(4, KC_DEL)
-
-// enum custom_keycodes { DRG_SCR = SAFE_RANGE, LR_PRN, LR_CBR, LR_BRC };
 
 // clang-format off
 const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
@@ -114,7 +114,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX, _______, DRGSCRL, SNIPING, XXXXXXX, XXXXXXX,    XXXXXXX, XXXXXXX, SNIPING, DRGSCRL, _______, XXXXXXX,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                  KC_BTN3, KC_BTN1, KC_BTN2,    KC_BTN2, KC_BTN1
+                                  DRGSCRL, KC_BTN1, KC_BTN2,    KC_BTN3, KC_BTN1
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 };
@@ -168,6 +168,7 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
             return TAPPING_TERM + 30;
         case O_GUI:
         case D_CUR:
+        case B_SCRL:
             return TAPPING_TERM + 20;
         case EQL_SFT:
         case SL_SFT:
@@ -191,34 +192,20 @@ const key_override_t lcbr_key_override   = ko_make_basic(MOD_MASK_SHIFT, KC_LCBR
 const key_override_t *key_overrides[] = {&delete_key_override, &lbrc_key_override, &lprn_key_override, &lcbr_key_override};
 
 const uint16_t PROGMEM esc_func_combo[] = {RCTL_T(KC_SPC), LT(2, KC_TAB), COMBO_END};
+const uint16_t PROGMEM grv_combo[] = {KC_Y, KC_QUOT, COMBO_END};
 
 combo_t key_combos[] = {
-    COMBO(esc_func_combo, LT(3, KC_ESC))
+    COMBO(esc_func_combo, LT(3, KC_ESC)),
+    COMBO(grv_combo, KC_GRV)
 };
 
 // bool process_record_user(uint16_t keycode, keyrecord_t *record) {
 //     switch (keycode) {
-//         case LR_PRN:
-//             if (record->event.pressed) {
-//                 tap_code16(KC_RPRN);
-//                 tap_code16(KC_LEFT);
-//                 tap_code16(KC_LPRN);
+//         case LT(0, KC_B):
+//             if (!record->tap.count && record->event.pressed) {
+//                 register_code(DRAGSCROLL_ENABLE);
 //             }
-//             break;
-//         case LR_BRC:
-//             if (record->event.pressed) {
-//                 tap_code16(KC_RBRC);
-//                 tap_code16(KC_LEFT);
-//                 tap_code16(KC_LBRC);
-//             }
-//             break;
-//         case LR_CBR:
-//             if (record->event.pressed) {
-//                 tap_code16(KC_RCBR);
-//                 tap_code16(KC_LEFT);
-//                 tap_code16(KC_LCBR);
-//             }
-//             break;
+//             return true;
 //     }
 //     return true;
 // }
