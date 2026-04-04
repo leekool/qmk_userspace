@@ -6,6 +6,7 @@ enum charybdis_keymap_layers {
     LAYER_NUM,
     LAYER_FUNC,
     LAYER_POINTER,
+    LAYER_TEST,
 };
 
 /** \brief Automatically enable sniping-mode on the pointer layer. */
@@ -118,6 +119,18 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
                                   DRGSCRL, KC_BTN1, KC_BTN2,    KC_BTN3, KC_BTN1
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
+
+  [LAYER_TEST] = LAYOUT(
+  // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
+       XXXXXXX,  KC_ESC,    KC_Q,    KC_W,    KC_E,    KC_T,    _______, _______, _______, _______, _______, XXXXXXX,
+  // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
+       XXXXXXX,  KC_TAB,    KC_A,    KC_S,    KC_D,    KC_F,    _______, _______, _______, _______, _______, XXXXXXX,
+  // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
+       XXXXXXX,  KC_SFT,    KC_X,    KC_C,    KC_V,    KC_L,    _______, _______, _______, _______, _______, XXXXXXX,
+  // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
+                                   KC_DEL,  KC_CTL,  KC_SPC,    SPC_CTL,  L2_TAB
+  //                            ╰───────────────────────────╯ ╰──────────────────╯
+  ),
 };
 // clang-format on
 
@@ -195,10 +208,12 @@ const key_override_t *key_overrides[] = {&delete_key_override, &lbrc_key_overrid
 
 const uint16_t PROGMEM esc_func_combo[] = {RCTL_T(KC_SPC), LT(2, KC_TAB), COMBO_END};
 const uint16_t PROGMEM grv_combo[] = {KC_Y, KC_QUOT, COMBO_END};
+const uint16_t PROGMEM test_layer_combo[] = {KC_DEL, LT(2, KC_TAB), COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(esc_func_combo, LT(3, KC_ESC)),
-    COMBO(grv_combo, KC_GRV)
+    COMBO(grv_combo, KC_GRV),
+    COMBO(test_layer_combo, TG(LAYER_TEST))
 };
 
 // bool process_record_user(uint16_t keycode, keyrecord_t *record) {
