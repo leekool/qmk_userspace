@@ -175,7 +175,7 @@ void rgb_matrix_update_pwm_buffers(void);
 #endif
 
 // me
-uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record) {
+uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_keycode) {
     switch (keycode) {
         case Z_SFT:
         case SL_SFT:
