@@ -180,6 +180,9 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_
         case Z_SFT:
         case SL_SFT:
             return 0;
+        case L1_BSPC:
+        case L2_TAB:
+            return 80;
         default:
             return FLOW_TAP_TERM;
     }
