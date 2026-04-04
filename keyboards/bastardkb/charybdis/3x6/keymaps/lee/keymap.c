@@ -189,11 +189,11 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
         case BS_SFT:
         case L1_0:
         case L1_BSPC:
-            return TAPPING_TERM - 30;
+            return TAPPING_TERM - 35;
         case L2_TAB:
             return TAPPING_TERM - 75;
         case Z_SFT:
-            return TAPPING_TERM - 80;
+            return TAPPING_TERM - 90;
         default:
             return TAPPING_TERM;
     }
