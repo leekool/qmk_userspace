@@ -45,7 +45,7 @@
 
 #define TAPPING_TOGGLE 2
 
-#define TAPPING_FORCE_HOLD
+#define QUICK_TAP_TERM 0
 #define TAPPING_TERM 185
 #define TAPPING_TERM_PER_KEY
 

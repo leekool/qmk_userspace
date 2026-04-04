@@ -66,7 +66,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX,   A_GUI,   R_ALT,   S_CTL,    KC_T,   D_CUR,       KC_H,    KC_N,   E_CTL,   I_ALT,   O_GUI, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       XXXXXXX,   Z_SFT,    KC_X,    KC_C,    KC_V,    KC_B,       KC_K,    KC_M, KC_COMM,  KC_DOT,  SL_SFT, XXXXXXX,
+       XXXXXXX,   Z_SFT,    KC_X,    KC_C,    KC_V,  B_SCRL,       KC_K,    KC_M, KC_COMM,  KC_DOT,  SL_SFT, XXXXXXX,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                    KC_DEL, L1_BSPC, ENT_CTL,    SPC_CTL,  L2_TAB
   //                            ╰───────────────────────────╯ ╰──────────────────╯
@@ -182,7 +182,7 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_
             return 0;
         case L1_BSPC:
         case L2_TAB:
-            return 80;
+            return 40;
         default:
             return FLOW_TAP_TERM;
     }
@@ -195,8 +195,9 @@ uint16_t get_tapping_term(uint16_t keycode, keyrecord_t *record) {
             return TAPPING_TERM + 30;
         case O_GUI:
         case D_CUR:
-        case B_SCRL:
             return TAPPING_TERM + 20;
+        case B_SCRL:
+            return TAPPING_TERM + 10;
         case EQL_SFT:
         case SL_SFT:
         case BS_SFT:
@@ -229,13 +230,14 @@ combo_t key_combos[] = {
     COMBO(test_layer_combo, TG(LAYER_TEST))
 };
 
-// bool process_record_user(uint16_t keycode, keyrecord_t *record) {
-//     switch (keycode) {
-//         case LT(0, KC_B):
-//             if (!record->tap.count && record->event.pressed) {
-//                 register_code(DRAGSCROLL_ENABLE);
-//             }
-//             return true;
-//     }
-//     return true;
-// }
+bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case B_SCRL:
+            if (!record->tap.count) {
+                charybdis_set_pointer_dragscroll_enabled(record->event.pressed);
+                return false;
+            }
+            return true;
+    }
+    return true;
+}
