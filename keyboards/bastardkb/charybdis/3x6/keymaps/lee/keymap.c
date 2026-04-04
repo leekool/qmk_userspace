@@ -179,10 +179,11 @@ uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_
     switch (keycode) {
         case Z_SFT:
         case SL_SFT:
-            return 0;
         case L1_BSPC:
         case L2_TAB:
-            return 40;
+        case SPC_CTL:
+        case ENT_CTL:
+            return 0;
         default:
             return FLOW_TAP_TERM;
     }
@@ -229,6 +230,14 @@ combo_t key_combos[] = {
     COMBO(grv_combo, KC_GRV),
     COMBO(test_layer_combo, TG(LAYER_TEST))
 };
+
+bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
+    switch (keycode) {
+        case L1_BSPC:
+            return true;
+    }
+    return false;
+}
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
