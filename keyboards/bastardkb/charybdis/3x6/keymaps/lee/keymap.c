@@ -40,6 +40,7 @@ static uint16_t auto_pointer_layer_timer = 0;
 #define E_CTL LCTL_T(KC_E)
 
 #define B_SCRL LT(0, KC_B)
+#define D_SCRL LT(0, KC_DEL)
 
 /* corner shifts */
 #define Z_SFT LSFT_T(KC_Z)
@@ -65,7 +66,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
        XXXXXXX,   Z_SFT,    KC_X,    KC_C,    KC_V,  B_SCRL,       KC_K,    KC_M, KC_COMM,  KC_DOT,  SL_SFT, XXXXXXX,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
-                                   KC_DEL, L1_BSPC, ENT_CTL,    SPC_CTL,  L2_TAB
+                                   D_SCRL, L1_BSPC, ENT_CTL,    SPC_CTL,  L2_TAB
   //                            ╰───────────────────────────╯ ╰──────────────────╯
   ),
 
@@ -233,6 +234,7 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
     switch (keycode) {
         case B_SCRL:
+        case D_SCRL:
             if (!record->tap.count) {
                 charybdis_set_pointer_dragscroll_enabled(record->event.pressed);
                 return false;
