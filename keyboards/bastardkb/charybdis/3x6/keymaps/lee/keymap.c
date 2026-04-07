@@ -215,7 +215,7 @@ const key_override_t *key_overrides[] = {&delete_key_override, &lbrc_key_overrid
 
 const uint16_t PROGMEM esc_func_combo[] = {RCTL_T(KC_SPC), LT(2, KC_TAB), COMBO_END};
 const uint16_t PROGMEM grv_combo[] = {KC_Y, KC_QUOT, COMBO_END};
-const uint16_t PROGMEM test_layer_combo[] = {KC_DEL, LT(2, KC_TAB), COMBO_END};
+const uint16_t PROGMEM test_layer_combo[] = {D_SCRL, LT(2, KC_TAB), COMBO_END};
 
 combo_t key_combos[] = {
     COMBO(esc_func_combo, LT(3, KC_ESC)),
