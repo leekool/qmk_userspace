@@ -53,4 +53,4 @@
 #define TAPPING_TERM 185
 #define TAPPING_TERM_PER_KEY
 
-#define FLOW_TAP_TERM 140
+#define FLOW_TAP_TERM 130
