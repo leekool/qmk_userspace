@@ -170,6 +170,8 @@ void rgb_matrix_update_pwm_buffers(void);
 uint16_t get_flow_tap_term(uint16_t keycode, keyrecord_t *record, uint16_t prev_keycode) {
     switch (keycode) {
         case Z_SFT:
+        case EQL_SFT:
+        case BS_SFT:
         case SL_SFT:
         case L1_BSPC:
         case L2_TAB:
