@@ -11,6 +11,8 @@ enum charybdis_keymap_layers {
 
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 static uint16_t auto_pointer_layer_timer = 0;
+static uint16_t last_keypress_timer      = 0;
+#define TYPING_SUPPRESSION_MS 80
 
 #    ifndef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS
 #        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS 1000
@@ -135,7 +137,7 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
-    if (abs(mouse_report.x) <= CHARYBDIS_POINTER_MOTION_THRESHOLD && abs(mouse_report.y) <= CHARYBDIS_POINTER_MOTION_THRESHOLD) {
+    if (last_keypress_timer != 0 && timer_elapsed(last_keypress_timer) < TYPING_SUPPRESSION_MS) {
         mouse_report.x = 0;
         mouse_report.y = 0;
     }
@@ -238,6 +240,9 @@ bool get_hold_on_other_key_press(uint16_t keycode, keyrecord_t *record) {
 }
 
 bool process_record_user(uint16_t keycode, keyrecord_t *record) {
+    if (record->event.pressed) {
+        last_keypress_timer = timer_read();
+    }
     switch (keycode) {
         case B_SCRL:
         case D_SCRL:
