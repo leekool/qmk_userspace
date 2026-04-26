@@ -135,6 +135,10 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
 #ifdef POINTING_DEVICE_ENABLE
 #    ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
+    if (abs(mouse_report.x) <= CHARYBDIS_POINTER_MOTION_THRESHOLD && abs(mouse_report.y) <= CHARYBDIS_POINTER_MOTION_THRESHOLD) {
+        mouse_report.x = 0;
+        mouse_report.y = 0;
+    }
     if (abs(mouse_report.x) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD || abs(mouse_report.y) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD) {
         layer_on(LAYER_POINTER);
         auto_pointer_layer_timer = timer_read();
