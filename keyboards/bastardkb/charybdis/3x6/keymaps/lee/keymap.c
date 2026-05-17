@@ -9,6 +9,10 @@ enum charybdis_keymap_layers {
     LAYER_TEST,
 };
 
+enum custom_keycodes {
+    DPI_LOG = SAFE_RANGE,
+};
+
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 static uint16_t auto_pointer_layer_timer = 0;
 static uint16_t last_keypress_timer      = 0;
@@ -116,9 +120,9 @@ const uint16_t PROGMEM keymaps[][MATRIX_ROWS][MATRIX_COLS] = {
   // ╭──────────────────────────────────────────────────────╮ ╭──────────────────────────────────────────────────────╮
        XXXXXXX, QK_BOOT, _______, _______, _______, _______,    _______, _______, _______, _______, _______, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       XXXXXXX, DPI_MOD, DRGSCRL, KC_BTN3, KC_BTN1, KC_BTN2,    _______, _______, _______, _______, _______, XXXXXXX,
+       XXXXXXX, S_D_MOD, DRGSCRL, KC_BTN3, KC_BTN1, KC_BTN2,    _______, _______, _______, _______, _______, XXXXXXX,
   // ├──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────┤
-       XXXXXXX, S_D_MOD, _______, _______, _______, _______,    _______, _______, _______, _______, _______, XXXXXXX,
+       XXXXXXX, DPI_MOD, DPI_LOG, _______, _______, _______,    _______, _______, _______, _______, _______, XXXXXXX,
   // ╰──────────────────────────────────────────────────────┤ ├──────────────────────────────────────────────────────╯
                                   _______, L1_BSPC, _______,    _______, _______
   //                            ╰───────────────────────────╯ ╰──────────────────╯
@@ -267,6 +271,39 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return false;
             }
             return true;
+        case DPI_LOG:
+            if (record->event.pressed) {
+                uint16_t dpi = charybdis_get_pointer_default_dpi();
+                uint16_t sniping = charybdis_get_pointer_sniping_dpi();
+                char buf[8];
+                send_string("dpi=");
+                char *p = buf + 7;
+                *p = 0;
+                if (dpi == 0) {
+                    *--p = '0';
+                } else {
+                    uint16_t v = dpi;
+                    while (v > 0) {
+                        *--p = '0' + (v % 10);
+                        v /= 10;
+                    }
+                }
+                send_string(p);
+                send_string(" sniping=");
+                p = buf + 7;
+                *p = 0;
+                if (sniping == 0) {
+                    *--p = '0';
+                } else {
+                    uint16_t v = sniping;
+                    while (v > 0) {
+                        *--p = '0' + (v % 10);
+                        v /= 10;
+                    }
+                }
+                send_string(p);
+            }
+            return false;
     }
     return true;
 }
