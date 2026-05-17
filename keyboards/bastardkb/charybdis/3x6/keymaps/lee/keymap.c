@@ -13,14 +13,18 @@ enum custom_keycodes {
     DPI_LOG = SAFE_RANGE,
 };
 
+static const uint16_t dpi_steps[] = {200, 250, 350, 450, 600};
+#define NUM_DPI_STEPS (sizeof(dpi_steps) / sizeof(dpi_steps[0]))
+#define DEFAULT_DPI_INDEX 1 // 250
+
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 static uint16_t auto_pointer_layer_timer = 0;
 static uint16_t last_keypress_timer      = 0;
 static int16_t  accumulated_x            = 0;
 static int16_t  accumulated_y            = 0;
 static uint16_t accumulation_timer       = 0;
-#define TYPING_SUPPRESSION_MS 80
-#define ACCUMULATION_WINDOW_MS 250
+#define TYPING_SUPPRESSION_MS 150
+#define ACCUMULATION_WINDOW_MS 180
 
 #    ifndef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS
 #        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS 1000
@@ -185,6 +189,20 @@ layer_state_t layer_state_set_user(layer_state_t state) {
     return state;
 }
 #    endif // CHARYBDIS_AUTO_SNIPING_ON_LAYER
+
+void keyboard_post_init_user(void) {
+    uint16_t current = charybdis_get_pointer_default_dpi();
+    bool in_list = false;
+    for (uint8_t i = 0; i < NUM_DPI_STEPS; i++) {
+        if (dpi_steps[i] == current) {
+            in_list = true;
+            break;
+        }
+    }
+    if (!in_list) {
+        charybdis_set_pointer_default_dpi(dpi_steps[DEFAULT_DPI_INDEX]);
+    }
+}
 #endif     // POINTING_DEVICE_ENABLE
 
 #ifdef RGB_MATRIX_ENABLE
@@ -271,6 +289,19 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                 return false;
             }
             return true;
+        case DPI_MOD:
+            if (record->event.pressed) {
+                uint16_t current = charybdis_get_pointer_default_dpi();
+                uint8_t next_idx = 0;
+                for (uint8_t i = 0; i < NUM_DPI_STEPS; i++) {
+                    if (dpi_steps[i] == current) {
+                        next_idx = (i + 1) % NUM_DPI_STEPS;
+                        break;
+                    }
+                }
+                charybdis_set_pointer_default_dpi(dpi_steps[next_idx]);
+            }
+            return false;
         case DPI_LOG:
             if (record->event.pressed) {
                 uint16_t dpi = charybdis_get_pointer_default_dpi();
