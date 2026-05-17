@@ -12,7 +12,11 @@ enum charybdis_keymap_layers {
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 static uint16_t auto_pointer_layer_timer = 0;
 static uint16_t last_keypress_timer      = 0;
+static int16_t  accumulated_x            = 0;
+static int16_t  accumulated_y            = 0;
+static uint16_t accumulation_timer       = 0;
 #define TYPING_SUPPRESSION_MS 80
+#define ACCUMULATION_WINDOW_MS 250
 
 #    ifndef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS
 #        define CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_TIMEOUT_MS 1000
@@ -140,10 +144,22 @@ report_mouse_t pointing_device_task_user(report_mouse_t mouse_report) {
     if (last_keypress_timer != 0 && timer_elapsed(last_keypress_timer) < TYPING_SUPPRESSION_MS) {
         mouse_report.x = 0;
         mouse_report.y = 0;
+        return mouse_report;
     }
-    if (abs(mouse_report.x) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD || abs(mouse_report.y) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD) {
+    if (timer_elapsed(accumulation_timer) > ACCUMULATION_WINDOW_MS) {
+        accumulated_x = 0;
+        accumulated_y = 0;
+    }
+    if (mouse_report.x != 0 || mouse_report.y != 0) {
+        accumulated_x += mouse_report.x;
+        accumulated_y += mouse_report.y;
+        accumulation_timer = timer_read();
+    }
+    if (abs(accumulated_x) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD || abs(accumulated_y) > CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_THRESHOLD) {
         layer_on(LAYER_POINTER);
         auto_pointer_layer_timer = timer_read();
+        accumulated_x = 0;
+        accumulated_y = 0;
     }
     return mouse_report;
 }
