@@ -17,6 +17,15 @@ static const uint16_t dpi_steps[] = {200, 250, 350, 450, 600};
 #define NUM_DPI_STEPS (sizeof(dpi_steps) / sizeof(dpi_steps[0]))
 #define DEFAULT_DPI_INDEX 1 // 250
 
+typedef union {
+    uint32_t raw;
+    struct {
+        uint8_t dpi_index : 4;
+    };
+} user_config_t;
+
+user_config_t user_config;
+
 #ifdef CHARYBDIS_AUTO_POINTER_LAYER_TRIGGER_ENABLE
 static uint16_t auto_pointer_layer_timer = 0;
 static uint16_t last_keypress_timer      = 0;
@@ -191,17 +200,18 @@ layer_state_t layer_state_set_user(layer_state_t state) {
 #    endif // CHARYBDIS_AUTO_SNIPING_ON_LAYER
 
 void keyboard_post_init_user(void) {
-    uint16_t current = charybdis_get_pointer_default_dpi();
-    bool in_list = false;
-    for (uint8_t i = 0; i < NUM_DPI_STEPS; i++) {
-        if (dpi_steps[i] == current) {
-            in_list = true;
-            break;
-        }
+    user_config.raw = eeconfig_read_user();
+    if (user_config.dpi_index >= NUM_DPI_STEPS) {
+        user_config.dpi_index = DEFAULT_DPI_INDEX;
+        eeconfig_update_user(user_config.raw);
     }
-    if (!in_list) {
-        charybdis_set_pointer_default_dpi(dpi_steps[DEFAULT_DPI_INDEX]);
-    }
+    pointing_device_set_cpi(dpi_steps[user_config.dpi_index]);
+}
+
+void eeconfig_init_user(void) {
+    user_config.raw = 0;
+    user_config.dpi_index = DEFAULT_DPI_INDEX;
+    eeconfig_update_user(user_config.raw);
 }
 #endif     // POINTING_DEVICE_ENABLE
 
@@ -291,21 +301,14 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
             return true;
         case DPI_MOD:
             if (record->event.pressed) {
-                uint16_t current = charybdis_get_pointer_default_dpi();
-                uint8_t next_idx = 0;
-                for (uint8_t i = 0; i < NUM_DPI_STEPS; i++) {
-                    if (dpi_steps[i] == current) {
-                        next_idx = (i + 1) % NUM_DPI_STEPS;
-                        break;
-                    }
-                }
-                charybdis_set_pointer_default_dpi(dpi_steps[next_idx]);
+                user_config.dpi_index = (user_config.dpi_index + 1) % NUM_DPI_STEPS;
+                eeconfig_update_user(user_config.raw);
+                pointing_device_set_cpi(dpi_steps[user_config.dpi_index]);
             }
             return false;
         case DPI_LOG:
             if (record->event.pressed) {
-                uint16_t dpi = charybdis_get_pointer_default_dpi();
-                uint16_t sniping = charybdis_get_pointer_sniping_dpi();
+                uint16_t dpi = pointing_device_get_cpi();
                 char buf[8];
                 send_string("dpi=");
                 char *p = buf + 7;
@@ -320,16 +323,16 @@ bool process_record_user(uint16_t keycode, keyrecord_t *record) {
                     }
                 }
                 send_string(p);
-                send_string(" sniping=");
+                send_string(" idx=");
                 p = buf + 7;
                 *p = 0;
-                if (sniping == 0) {
+                uint16_t idx = user_config.dpi_index;
+                if (idx == 0) {
                     *--p = '0';
                 } else {
-                    uint16_t v = sniping;
-                    while (v > 0) {
-                        *--p = '0' + (v % 10);
-                        v /= 10;
+                    while (idx > 0) {
+                        *--p = '0' + (idx % 10);
+                        idx /= 10;
                     }
                 }
                 send_string(p);
